@@ -5,6 +5,7 @@ export default [
   {
     ignores: ['dist/**', 'node_modules/**', 'coverage/**'],
   },
+  ...tseslint.configs['flat/recommended'],
   {
     files: ['**/*.ts'],
     languageOptions: {
@@ -14,11 +15,7 @@ export default [
         sourceType: 'module',
       },
     },
-    plugins: {
-      '@typescript-eslint': tseslint,
-    },
     rules: {
-      ...tseslint.configs.recommended.rules,
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': 'error',
       'no-console': ['warn', { allow: ['error', 'warn'] }],
