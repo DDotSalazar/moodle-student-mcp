@@ -4,6 +4,21 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-01
+
+### Added
+- Eleven write tools: `submit_assignment`, `start_quiz_attempt`, `save_quiz_answers`, `submit_quiz_attempt`, `start_forum_discussion`, `post_forum_reply`, `send_message`, `mark_messages_read`, `submit_choice_response`, `submit_course_feedback`, `create_calendar_event`.
+- `MoodleClient.uploadFiles` method for the multipart `/webservice/upload.php` endpoint.
+- Quiz HTML question parser and per-question-type answer encoder supporting multichoice (single + multi), truefalse, shortanswer, essay, numerical, match, and ddwtos.
+- Friendly mappings for new Moodle error codes: `notopenforsubmissions`, `submissionsclosed`, `nopermissiontoaddpost`, `cannotsendmessage`, `attemptalreadyclosed`, `quizalreadystarted`, `feedback_completed`, `cannotsavetempfile`, `passwordrequired`.
+- Responsible-use section in README.
+
+### Changed
+- Bumped `engines.node` to `>=20`.
+
+### Notes
+- Password-protected quizzes are not supported in v0.2; `start_quiz_attempt` surfaces Moodle's `passwordrequired` error.
+
 ## [0.1.0] - 2026-05-01
 
 ### Added
