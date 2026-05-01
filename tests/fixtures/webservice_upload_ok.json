@@ -1,0 +1,16 @@
+[
+  {
+    "component": "user",
+    "contextid": 5,
+    "userid": "42",
+    "filearea": "draft",
+    "filename": "essay.pdf",
+    "filepath": "/",
+    "itemid": 999000111,
+    "license": "allrightsreserved",
+    "author": "Diego Salazar",
+    "source": "",
+    "filesize": 12345,
+    "mimetype": "application/pdf"
+  }
+]

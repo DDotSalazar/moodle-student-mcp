@@ -1,6 +1,6 @@
 {
   "name": "moodle-student-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Model Context Protocol server giving LLMs access to a student's Moodle data: courses, assignments, grades, calendar, and quizzes.",
   "type": "module",
   "main": "dist/index.js",
@@ -51,6 +51,7 @@
   "homepage": "https://github.com/DDotSalazar/moodle-student-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
+    "node-html-parser": "^7.1.0",
     "zod": "^4.4.1"
   },
   "devDependencies": {

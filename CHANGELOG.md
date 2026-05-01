@@ -4,6 +4,21 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-01
+
+### Added
+- Eleven write tools: `submit_assignment`, `start_quiz_attempt`, `save_quiz_answers`, `submit_quiz_attempt`, `start_forum_discussion`, `post_forum_reply`, `send_message`, `mark_messages_read`, `submit_choice_response`, `submit_course_feedback`, `create_calendar_event`.
+- `MoodleClient.uploadFiles` method for the multipart `/webservice/upload.php` endpoint.
+- Quiz HTML question parser and per-question-type answer encoder supporting multichoice (single + multi), truefalse, shortanswer, essay, numerical, match, and ddwtos.
+- Friendly mappings for new Moodle error codes: `notopenforsubmissions`, `submissionsclosed`, `nopermissiontoaddpost`, `cannotsendmessage`, `attemptalreadyclosed`, `quizalreadystarted`, `feedback_completed`, `cannotsavetempfile`, `passwordrequired`.
+- Responsible-use section in README.
+
+### Changed
+- Bumped `engines.node` to `>=20`.
+
+### Notes
+- Password-protected quizzes are not supported in v0.2; `start_quiz_attempt` surfaces Moodle's `passwordrequired` error.
+
 ## [0.1.0] - 2026-05-01
 
 ### Added
@@ -22,5 +37,6 @@ All notable changes to this project are documented in this file. The format is b
 - GitHub Actions CI for Node 18, 20, and 22.
 - Quickstart for Claude Desktop and a Moodle Web Service setup guide.
 
-[Unreleased]: https://github.com/DDotSalazar/moodle-student-mcp/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/DDotSalazar/moodle-student-mcp/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/DDotSalazar/moodle-student-mcp/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DDotSalazar/moodle-student-mcp/releases/tag/v0.1.0

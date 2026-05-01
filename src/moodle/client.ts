@@ -1,3 +1,5 @@
+import { readFile, stat } from 'node:fs/promises';
+import { basename } from 'node:path';
 import { MoodleApiError } from '../errors.js';
 import type { MoodleErrorBody } from './types.js';
 
@@ -11,6 +13,17 @@ const FRIENDLY_MESSAGES: Record<string, string> = {
   nopermissions:
     "Your token does not have permission for this action. Make sure the token's external service includes the required Moodle Web Service functions.",
   dml_missing_record_exception: 'The requested item was not found. Check the ID.',
+  notopenforsubmissions: 'This assignment is not open for new submissions.',
+  submissionsclosed: 'Submissions are closed for this assignment.',
+  nopermissiontoaddpost: 'You do not have permission to post in this forum.',
+  cannotsendmessage:
+    'Could not send the message. The recipient may have messaging disabled or have blocked you.',
+  attemptalreadyclosed: 'This quiz attempt has already been finalised.',
+  quizalreadystarted:
+    'There is already an in-progress attempt at this quiz; resume it instead of starting a new one.',
+  feedback_completed: 'You have already completed this feedback.',
+  cannotsavetempfile: "File upload failed on Moodle's side. Try again.",
+  passwordrequired: 'This quiz requires a password and cannot be started by the MCP tool. Take it manually in Moodle.',
 };
 
 function encodeParams(params: Record<string, unknown>): URLSearchParams {
@@ -107,5 +120,76 @@ export class MoodleClient {
     }
 
     return data as T;
+  }
+
+  async uploadFiles(
+    files: string[],
+  ): Promise<{ itemid: number; uploaded: Array<{ filename: string; filesize: number }> }> {
+    for (const path of files) {
+      let info;
+      try {
+        info = await stat(path);
+      } catch {
+        throw new MoodleApiError('NETWORK', `Not a file: ${path}`, {});
+      }
+      if (!info.isFile()) {
+        throw new MoodleApiError('NETWORK', `Not a file: ${path}`, {});
+      }
+    }
+
+    const url = `${this.baseUrl}/webservice/upload.php?token=${encodeURIComponent(
+      this.token,
+    )}&filearea=draft&itemid=0`;
+
+    const form = new FormData();
+    for (const path of files) {
+      const buf = await readFile(path);
+      form.append('file_box', new Blob([buf]), basename(path));
+    }
+
+    let response: Response;
+    try {
+      response = await fetch(url, { method: 'POST', body: form });
+    } catch (err) {
+      throw new MoodleApiError(
+        'NETWORK',
+        `Could not reach Moodle upload endpoint: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+        {},
+      );
+    }
+
+    if (!response.ok) {
+      throw new MoodleApiError('HTTP_ERROR', `Upload returned HTTP ${response.status}`, {
+        httpStatus: response.status,
+      });
+    }
+
+    const data: unknown = await response.json();
+
+    if (
+      typeof data === 'object' &&
+      data !== null &&
+      'error' in data &&
+      typeof (data as { error: unknown }).error === 'string'
+    ) {
+      const code = String((data as { errorcode?: unknown }).errorcode ?? 'UNKNOWN');
+      const friendly = FRIENDLY_MESSAGES[code] ?? String((data as { error: unknown }).error);
+      throw new MoodleApiError(code, friendly, {});
+    }
+
+    if (!Array.isArray(data) || data.length === 0) {
+      throw new MoodleApiError('UNEXPECTED', 'Upload endpoint returned an unexpected response', {});
+    }
+
+    const first = data[0] as { itemid: number };
+    return {
+      itemid: first.itemid,
+      uploaded: data.map((f) => ({
+        filename: String((f as { filename: unknown }).filename),
+        filesize: Number((f as { filesize: unknown }).filesize),
+      })),
+    };
   }
 }

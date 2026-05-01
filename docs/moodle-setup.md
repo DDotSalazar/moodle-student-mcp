@@ -75,14 +75,14 @@ Subject: Activate Moodle Web Service token for my account
 Hi,
 
 I'd like to use a personal Moodle Web Service token for an MCP integration
-that lets me query my own coursework data through an LLM (read-only,
-personal use). The token page at
+that lets me view and work with my own coursework data through an LLM
+(personal use). The token page at
 https://YOUR_MOODLE/user/managetoken.php is empty for my account, so
 the mobile service is not currently authorized for me.
 
 Could you authorize my Moodle account for the "Moodle mobile web service",
 or alternatively issue me a token for an external service that includes
-these read-only functions:
+these functions:
 
   core_webservice_get_site_info
   core_enrol_get_users_courses
@@ -95,9 +95,9 @@ these read-only functions:
   mod_quiz_get_quizzes_by_courses
   mod_quiz_get_user_attempts
 
-These are the same functions the official Moodle mobile app uses, so no
-new permissions are involved. The integration only reads; it never writes
-back to Moodle.
+The integration reads my course data and lets me submit assignments, attempt
+quizzes, post in forums, and create personal calendar events through the
+same Web Service interface. It never acts as anyone other than me.
 
 My account: <your.username>
 Project source: https://github.com/DDotSalazar/moodle-student-mcp
@@ -145,3 +145,26 @@ Steps to set up a custom service:
 4. Add the ten functions above to the service.
 5. Authorise users (or roles) to access the service.
 6. Have authorised users generate a token from their Preferences > Security keys page (or via `https://YOUR_MOODLE/user/managetoken.php`).
+
+### v0.2 functions (write tools)
+
+If you are using v0.2, the token's external service must additionally include:
+
+- `mod_assign_save_submission`
+- `mod_assign_submit_for_grading`
+- `mod_quiz_start_attempt`
+- `mod_quiz_get_attempt_data`
+- `mod_quiz_save_attempt`
+- `mod_quiz_process_attempt`
+- `mod_forum_add_discussion`
+- `mod_forum_add_discussion_post`
+- `core_message_send_instant_messages`
+- `core_message_mark_message_read`
+- `mod_choice_submit_choice_response`
+- `mod_feedback_get_items`
+- `mod_feedback_process_page`
+- `core_calendar_create_calendar_events`
+
+The default `moodle_mobile_app` service includes all of these. If your admin has locked it down, ask them to enable exactly the functions above.
+
+The v0.2 `submit_assignment` tool also calls the file upload endpoint at `/webservice/upload.php`. This is not a Web Service function but does require a valid token; no extra configuration is needed.
