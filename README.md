@@ -105,6 +105,17 @@ Any MCP-compatible client should work. The server starts via `npx -y moodle-stud
 | `list_upcoming_deadlines` | Upcoming action items (the dashboard Timeline view). |
 | `list_quizzes` | Quizzes available across your courses. |
 | `get_quiz_attempts` | Your attempts for a specific quiz. |
+| `submit_assignment` | Save draft submission text and/or files; optionally finalise for grading. |
+| `start_quiz_attempt` | Start or resume a quiz attempt; returns normalised questions across all pages. |
+| `save_quiz_answers` | Save answers to one or more questions in an in-progress attempt. |
+| `submit_quiz_attempt` | Finalise an in-progress quiz attempt for grading. |
+| `start_forum_discussion` | Start a new discussion thread in a forum. |
+| `post_forum_reply` | Reply to an existing forum post. |
+| `send_message` | Send a direct message to another Moodle user. |
+| `mark_messages_read` | Mark one or more messages as read. |
+| `submit_choice_response` | Submit a response to an in-course poll. |
+| `submit_course_feedback` | Submit responses to a feedback form. |
+| `create_calendar_event` | Create a personal calendar event. |
 
 ## Configuration
 
@@ -117,6 +128,10 @@ Any MCP-compatible client should work. The server starts via `npx -y moodle-stud
 ## Setting up a Moodle Web Service token
 
 See [docs/moodle-setup.md](docs/moodle-setup.md) for step-by-step instructions, including the list of Web Service functions an admin needs to enable if your school does not already expose them via the Moodle Mobile service.
+
+## Responsible use
+
+This tool exposes Moodle's own Web Service API to an LLM acting on your behalf. Using it to take quizzes, submit assignments, post in forums, or send messages is your responsibility, including any compliance with your institution's academic-integrity rules. Many institutions treat AI-generated coursework as misconduct; some allow it with attribution; some have no policy yet. Read your school's policy before pointing this at a real account. The maintainer disclaims liability for any consequences of use.
 
 ## Troubleshooting
 
