@@ -1,6 +1,6 @@
 # moodle-student-mcp
 
-A Model Context Protocol server that lets an LLM read a student's Moodle data: courses, assignments, grades, calendar, and quizzes. Read-only.
+A Model Context Protocol server that lets an LLM read and act on a student's Moodle data: courses, assignments, grades, calendar, and quizzes.
 
 [![CI](https://github.com/DDotSalazar/moodle-student-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/DDotSalazar/moodle-student-mcp/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -8,7 +8,7 @@ A Model Context Protocol server that lets an LLM read a student's Moodle data: c
 
 ## What it does
 
-This MCP server exposes nine read-only tools that call the Moodle Web Service REST API on behalf of a student. Plug it into Claude Desktop, Claude Code, Cursor, VS Code, or any other MCP host, and ask things like "what's due this week?", "what did I get on my last quiz?", or "what's the grade breakdown for my data structures course?".
+This MCP server exposes twenty tools that call the Moodle Web Service REST API on behalf of a student: nine read-only tools to query data and eleven write tools to submit assignments, take quizzes, post forums, send messages, and more. Plug it into Claude Desktop, Claude Code, Cursor, VS Code, or any other MCP host, and ask things like "what's due this week?", "what did I get on my last quiz?", "submit my assignment", or "start my quiz".
 
 ## Installation
 

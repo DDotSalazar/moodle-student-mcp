@@ -37,5 +37,6 @@ All notable changes to this project are documented in this file. The format is b
 - GitHub Actions CI for Node 18, 20, and 22.
 - Quickstart for Claude Desktop and a Moodle Web Service setup guide.
 
-[Unreleased]: https://github.com/DDotSalazar/moodle-student-mcp/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/DDotSalazar/moodle-student-mcp/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/DDotSalazar/moodle-student-mcp/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DDotSalazar/moodle-student-mcp/releases/tag/v0.1.0
