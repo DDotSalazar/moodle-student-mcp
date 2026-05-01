@@ -35,7 +35,7 @@ Edit `claude_desktop_config.json` (Settings, Developer, Edit Config):
 }
 ```
 
-Restart Claude Desktop. The nine tools should appear in the tool picker.
+Restart Claude Desktop. The twenty tools should appear in the tool picker.
 
 ### Claude Code (CLI)
 

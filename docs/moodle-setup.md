@@ -75,14 +75,14 @@ Subject: Activate Moodle Web Service token for my account
 Hi,
 
 I'd like to use a personal Moodle Web Service token for an MCP integration
-that lets me query my own coursework data through an LLM (read-only,
-personal use). The token page at
+that lets me view and work with my own coursework data through an LLM
+(personal use). The token page at
 https://YOUR_MOODLE/user/managetoken.php is empty for my account, so
 the mobile service is not currently authorized for me.
 
 Could you authorize my Moodle account for the "Moodle mobile web service",
 or alternatively issue me a token for an external service that includes
-these read-only functions:
+these functions:
 
   core_webservice_get_site_info
   core_enrol_get_users_courses
@@ -95,9 +95,9 @@ these read-only functions:
   mod_quiz_get_quizzes_by_courses
   mod_quiz_get_user_attempts
 
-These are the same functions the official Moodle mobile app uses, so no
-new permissions are involved. The integration only reads; it never writes
-back to Moodle.
+The integration reads my course data and lets me submit assignments, attempt
+quizzes, post in forums, and create personal calendar events through the
+same Web Service interface. It never acts as anyone other than me.
 
 My account: <your.username>
 Project source: https://github.com/DDotSalazar/moodle-student-mcp
