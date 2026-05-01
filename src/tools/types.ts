@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import type { MoodleClient } from '../moodle/client.js';
 
 export type ZodRawShape = z.core.$ZodShape;
