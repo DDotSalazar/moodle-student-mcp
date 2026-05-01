@@ -40,12 +40,8 @@ describe('loadConfig', () => {
   });
 
   it('throws ConfigError when MOODLE_URL is missing', () => {
+    expect(() => loadConfig({ MOODLE_TOKEN: 'abc' })).toThrow(ConfigError);
     expect(() => loadConfig({ MOODLE_TOKEN: 'abc' })).toThrowError(/MOODLE_URL/);
-    try {
-      loadConfig({ MOODLE_TOKEN: 'abc' });
-    } catch (e) {
-      expect(e).toBeInstanceOf(ConfigError);
-    }
   });
 
   it('throws ConfigError when MOODLE_TOKEN is missing', () => {

@@ -2,6 +2,7 @@ export class ConfigError extends Error {
   constructor(message: string) {
     super(message);
     this.name = 'ConfigError';
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
@@ -20,5 +21,6 @@ export class MoodleApiError extends Error {
     this.name = 'MoodleApiError';
     this.code = code;
     this.context = context;
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
