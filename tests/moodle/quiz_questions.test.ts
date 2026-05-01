@@ -122,6 +122,12 @@ describe('quiz_questions parser', () => {
     expect(rewritten).toContain('https://m.test/pluginfile.php/1/mod_quiz/img.png?token=tok');
   });
 
+  it('does not double-append token when one already exists', () => {
+    const once = rewriteImageUrls(`<img src="https://m.test/pluginfile.php/1/img.png"/>`, 'tok');
+    const twice = rewriteImageUrls(once, 'tok');
+    expect(twice).toBe(once);
+  });
+
   it('extracts images from question HTML with auth-tokenised URLs', () => {
     const html = `<div class="que multichoice">
       <div class="qtext"><img src="https://m.test/pluginfile.php/2/mod_quiz/q.png" alt="chart"/></div>

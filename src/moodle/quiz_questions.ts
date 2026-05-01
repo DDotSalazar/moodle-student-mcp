@@ -39,7 +39,8 @@ const QTYPE_RE = /\bque\s+([a-z]+)\b/;
 const FIELD_RE = /^q(\d+):(\d+)_/;
 
 export function rewriteImageUrls(html: string, token: string): string {
-  return html.replace(/(src=["'])([^"']*pluginfile\.php[^"']*)(["'])/g, (_m, p1, url, p3) => {
+  return html.replace(/(src=["'])([^"']*pluginfile\.php[^"']*)(["'])/g, (m, p1, url, p3) => {
+    if (/[?&]token=/.test(url)) return m;
     const sep = url.includes('?') ? '&' : '?';
     return `${p1}${url}${sep}token=${encodeURIComponent(token)}${p3}`;
   });
@@ -91,8 +92,11 @@ function parseMultichoice(root: HTMLElement): {
   options: ParsedOption[];
   multiselect: boolean;
 } {
-  const inputs = root.querySelectorAll('.answer input[type="radio"], .answer input[type="checkbox"]');
-  const multiselect = inputs.length > 0 && inputs.every((i) => i.getAttribute('type') === 'checkbox');
+  const inputs = root.querySelectorAll(
+    '.answer input[type="radio"], .answer input[type="checkbox"]',
+  );
+  const multiselect =
+    inputs.length > 0 && inputs.every((i) => i.getAttribute('type') === 'checkbox');
   const options: ParsedOption[] = inputs.map((input) => {
     const name = input.getAttribute('name') ?? '';
     const value = input.getAttribute('value') ?? '0';
@@ -100,7 +104,9 @@ function parseMultichoice(root: HTMLElement): {
     const m = name.match(/_choice(\d+)$/);
     if (m) index = Number(m[1]);
     const label = input.parentNode?.text?.trim() ?? '';
-    const html = (input.parentNode as HTMLElement | null)?.innerHTML?.replace(/<input[^>]*>/, '').trim() ?? label;
+    const html =
+      (input.parentNode as HTMLElement | null)?.innerHTML?.replace(/<input[^>]*>/, '').trim() ??
+      label;
     return { index, text: label, html };
   });
   return { options, multiselect };
@@ -128,11 +134,7 @@ function parseMatch(root: HTMLElement): { sub_slots: ParsedSubSlot[]; options: P
   return { sub_slots, options: [...optionMap.values()].sort((a, b) => a.index - b.index) };
 }
 
-export function parseQuestion(
-  slot: number,
-  html: string,
-  token: string,
-): ParsedQuestion {
+export function parseQuestion(slot: number, html: string, token: string): ParsedQuestion {
   const root = parse(html);
   const wrapper =
     (root.querySelector('div.que') as HTMLElement | null) ?? (root.firstChild as HTMLElement);
