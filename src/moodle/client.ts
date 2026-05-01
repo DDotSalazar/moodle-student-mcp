@@ -11,6 +11,17 @@ const FRIENDLY_MESSAGES: Record<string, string> = {
   nopermissions:
     "Your token does not have permission for this action. Make sure the token's external service includes the required Moodle Web Service functions.",
   dml_missing_record_exception: 'The requested item was not found. Check the ID.',
+  notopenforsubmissions: 'This assignment is not open for new submissions.',
+  submissionsclosed: 'Submissions are closed for this assignment.',
+  nopermissiontoaddpost: 'You do not have permission to post in this forum.',
+  cannotsendmessage:
+    'Could not send the message. The recipient may have messaging disabled or have blocked you.',
+  attemptalreadyclosed: 'This quiz attempt has already been finalised.',
+  quizalreadystarted:
+    'There is already an in-progress attempt at this quiz; resume it instead of starting a new one.',
+  feedback_completed: 'You have already completed this feedback.',
+  cannotsavetempfile: "File upload failed on Moodle's side. Try again.",
+  passwordrequired: 'This quiz requires a password and cannot be started by the MCP tool. Take it manually in Moodle.',
 };
 
 function encodeParams(params: Record<string, unknown>): URLSearchParams {

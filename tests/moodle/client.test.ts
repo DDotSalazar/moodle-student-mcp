@@ -128,4 +128,27 @@ describe('MoodleClient', () => {
       code: 'NETWORK',
     });
   });
+
+  it.each([
+    ['notopenforsubmissions', /not open for new submissions/i],
+    ['submissionsclosed', /submissions are closed/i],
+    ['nopermissiontoaddpost', /permission to post/i],
+    ['cannotsendmessage', /could not send the message/i],
+    ['attemptalreadyclosed', /already been finalised/i],
+    ['quizalreadystarted', /in-progress attempt/i],
+    ['feedback_completed', /already completed this feedback/i],
+    ['cannotsavetempfile', /file upload failed/i],
+    ['passwordrequired', /requires a password/i],
+  ])('maps %s to a friendly message', async (errorcode, expected) => {
+    mswServer.use(
+      http.post(WS_ENDPOINT, () =>
+        HttpResponse.json({ exception: 'moodle_exception', errorcode, message: 'raw moodle text' }),
+      ),
+    );
+    const client = new MoodleClient(MOODLE_URL, MOODLE_TOKEN);
+    await expect(client.call('any_function', {})).rejects.toMatchObject({
+      code: errorcode,
+      message: expect.stringMatching(expected),
+    });
+  });
 });
