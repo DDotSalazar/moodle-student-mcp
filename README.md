@@ -8,11 +8,17 @@ A Model Context Protocol server that lets an LLM read a student's Moodle data: c
 
 ## What it does
 
-This MCP server exposes nine read-only tools that call the Moodle Web Service REST API on behalf of a student. Plug it into Claude Desktop or any other MCP host and ask things like "what's due this week?", "what did I get on my last quiz?", or "what's the grade breakdown for my data structures course?".
+This MCP server exposes nine read-only tools that call the Moodle Web Service REST API on behalf of a student. Plug it into Claude Desktop, Claude Code, Cursor, VS Code, or any other MCP host, and ask things like "what's due this week?", "what did I get on my last quiz?", or "what's the grade breakdown for my data structures course?".
 
-## Quickstart (Claude Desktop)
+## Installation
 
-Add this to your Claude Desktop `claude_desktop_config.json`:
+You will need a Moodle Web Service token before installing. See the [token setup guide](docs/moodle-setup.md) for how to generate one.
+
+Below are config snippets for the most common MCP hosts. The server itself is the same in all of them: it runs as `npx -y moodle-student-mcp` and reads `MOODLE_URL` and `MOODLE_TOKEN` from the environment.
+
+### Claude Desktop
+
+Edit `claude_desktop_config.json` (Settings, Developer, Edit Config):
 
 ```json
 {
@@ -29,7 +35,62 @@ Add this to your Claude Desktop `claude_desktop_config.json`:
 }
 ```
 
-Restart Claude Desktop. The nine tools below should now appear in the tool picker.
+Restart Claude Desktop. The nine tools should appear in the tool picker.
+
+### Claude Code (CLI)
+
+```
+claude mcp add -s user moodle-student \
+  -e MOODLE_URL=https://moodle.your-school.edu \
+  -e MOODLE_TOKEN=your-token-here \
+  -- npx -y moodle-student-mcp
+```
+
+`-s user` makes it available across all your projects. Drop the flag if you only want it in the current project.
+
+### Cursor
+
+Edit `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` in your project. Same shape as Claude Desktop:
+
+```json
+{
+  "mcpServers": {
+    "moodle-student": {
+      "command": "npx",
+      "args": ["-y", "moodle-student-mcp"],
+      "env": {
+        "MOODLE_URL": "https://moodle.your-school.edu",
+        "MOODLE_TOKEN": "your-token-here"
+      }
+    }
+  }
+}
+```
+
+### VS Code (GitHub Copilot Chat)
+
+VS Code 1.99+ supports MCP servers natively in Copilot Chat. Add a `.vscode/mcp.json` file to your workspace (or configure it in user settings):
+
+```json
+{
+  "servers": {
+    "moodle-student": {
+      "command": "npx",
+      "args": ["-y", "moodle-student-mcp"],
+      "env": {
+        "MOODLE_URL": "https://moodle.your-school.edu",
+        "MOODLE_TOKEN": "your-token-here"
+      }
+    }
+  }
+}
+```
+
+Note that VS Code uses `"servers"` while Claude Desktop and Cursor use `"mcpServers"`.
+
+### Other MCP clients
+
+Any MCP-compatible client should work. The server starts via `npx -y moodle-student-mcp` and speaks the Model Context Protocol over stdio. Pass `MOODLE_URL` and `MOODLE_TOKEN` as environment variables.
 
 ## Tools
 
@@ -78,7 +139,7 @@ npm install
 npm run dev
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the dev workflow and how to add a new tool.
+Other scripts: `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`.
 
 ## License
 
