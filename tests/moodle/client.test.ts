@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
+import { writeFileSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { MoodleClient } from '../../src/moodle/client.js';
 import { mswServer, http, HttpResponse, MOODLE_URL, MOODLE_TOKEN, WS_ENDPOINT } from '../helpers/server.js';
+import uploadOk from '../fixtures/webservice_upload_ok.json' with { type: 'json' };
 
 describe('MoodleClient', () => {
   it('POSTs form-encoded params with token, function, and json format', async () => {
@@ -149,6 +153,65 @@ describe('MoodleClient', () => {
     await expect(client.call('any_function', {})).rejects.toMatchObject({
       code: errorcode,
       message: expect.stringMatching(expected),
+    });
+  });
+});
+
+describe('MoodleClient.uploadFiles', () => {
+  it('uploads files via multipart and returns the draft itemid', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'mscli-'));
+    const filePath = join(dir, 'essay.pdf');
+    writeFileSync(filePath, Buffer.from('hello pdf bytes'));
+
+    let receivedFilename: string | undefined;
+    let receivedToken: string | null = null;
+    mswServer.use(
+      http.post(`${MOODLE_URL}/webservice/upload.php`, async ({ request }) => {
+        const url = new URL(request.url);
+        receivedToken = url.searchParams.get('token');
+        const form = await request.formData();
+        const file = form.get('file_box') as File | null;
+        receivedFilename = file?.name;
+        return HttpResponse.json(uploadOk);
+      }),
+    );
+
+    const client = new MoodleClient(MOODLE_URL, MOODLE_TOKEN);
+    const result = await client.uploadFiles([filePath]);
+
+    expect(receivedToken).toBe(MOODLE_TOKEN);
+    expect(receivedFilename).toBe('essay.pdf');
+    expect(result.itemid).toBe(999000111);
+    expect(result.uploaded).toEqual([{ filename: 'essay.pdf', filesize: 12345 }]);
+
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  it('throws MoodleApiError when the upload endpoint returns an error body', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'mscli-'));
+    const filePath = join(dir, 'essay.pdf');
+    writeFileSync(filePath, Buffer.from('x'));
+
+    mswServer.use(
+      http.post(`${MOODLE_URL}/webservice/upload.php`, () =>
+        HttpResponse.json({ error: 'upload failed', errorcode: 'cannotsavetempfile' }),
+      ),
+    );
+
+    const client = new MoodleClient(MOODLE_URL, MOODLE_TOKEN);
+    await expect(client.uploadFiles([filePath])).rejects.toMatchObject({
+      code: 'cannotsavetempfile',
+      message: expect.stringMatching(/file upload failed/i),
+    });
+
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  it('throws when a file path does not exist', async () => {
+    const client = new MoodleClient(MOODLE_URL, MOODLE_TOKEN);
+    await expect(client.uploadFiles(['/no/such/file.pdf'])).rejects.toMatchObject({
+      code: 'NETWORK',
+      message: expect.stringMatching(/not a file/i),
     });
   });
 });
